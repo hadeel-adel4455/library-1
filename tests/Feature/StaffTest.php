@@ -4,10 +4,12 @@ use App\Models\Staff;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\Sanctum;
+
 uses(RefreshDatabase::class);
 
 test('it can list staff', function () {
-    Sanctum::actingAs(Staff::factory()->create());
+    Sanctum::actingAs(Staff::factory()->create(), [], 'staff');
+
     Staff::create([
         'name' => 'Test Staff',
         'email' => 'list@example.com',
@@ -17,10 +19,14 @@ test('it can list staff', function () {
     $response = $this->getJson('/api/staff');
 
     $response->assertStatus(200)
-        ->assertJsonPath('data.0.name', 'Test Staff');
+        ->assertJsonFragment([
+            'name' => 'Test Staff',
+        ]);
 });
 
 test('it can create staff', function () {
+    Sanctum::actingAs(Staff::factory()->create(), [], 'staff');
+
     $response = $this->postJson('/api/staff', [
         'name' => 'New Staff',
         'email' => 'new@example.com',
@@ -31,6 +37,8 @@ test('it can create staff', function () {
 });
 
 test('it can show one staff member', function () {
+    Sanctum::actingAs(Staff::factory()->create(), [], 'staff');
+
     $staff = Staff::create([
         'name' => 'Show Staff',
         'email' => 'show@example.com',
@@ -43,6 +51,8 @@ test('it can show one staff member', function () {
 });
 
 test('it can update staff', function () {
+    Sanctum::actingAs(Staff::factory()->create(), [], 'staff');
+
     $staff = Staff::create([
         'name' => 'Old Name',
         'email' => 'update@example.com',
@@ -56,6 +66,8 @@ test('it can update staff', function () {
 });
 
 test('it can delete staff', function () {
+    Sanctum::actingAs(Staff::factory()->create(), [], 'staff');
+
     $staff = Staff::create([
         'name' => 'Delete Staff',
         'email' => 'delete@example.com',

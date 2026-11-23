@@ -25,9 +25,9 @@ class CustomerAuthController extends Controller
             ]);
         }
 
-        return response()->json([
-            "error" => "invalid credentials",
-        ]);
+         return response()->json([
+        "error" => "invalid credentials",
+    ], 401);
     }
 
     public function me()

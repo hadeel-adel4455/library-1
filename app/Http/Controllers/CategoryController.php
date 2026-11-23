@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
 use App\Http\Resources\CategoryResource;
+use App\Models\Book;
 
 class CategoryController extends Controller
 {
@@ -35,10 +36,18 @@ class CategoryController extends Controller
         return new CategoryResource($category);
     }
 
-    public function destroy(Category $category)
-    {
-        $category->delete();
+   public function destroy(Category $category)
+{
+    $hasBooks = Book::where('category_id', $category->id)->exists();
 
-        return response()->noContent();
+    if ($hasBooks) {
+        return response()->json([
+            'error' => 'Cannot delete category because it has books'
+        ], 409);
     }
+
+    $category->delete();
+
+    return response()->noContent();
+}
 }
